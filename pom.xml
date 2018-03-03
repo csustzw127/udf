@@ -1,0 +1,17 @@
+<project xmlns="http://maven.apache.org/POM/4.0.0" xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance" xsi:schemaLocation="http://maven.apache.org/POM/4.0.0 http://maven.apache.org/xsd/maven-4.0.0.xsd">
+	<modelVersion>4.0.0</modelVersion>
+	<groupId>com.csii.loan</groupId>
+	<artifactId>PmtPlanUDTF</artifactId>
+	<version>0.0.1-SNAPSHOT</version>
+	<packaging>pom</packaging>
+  
+  	<dependencies>
+		<!-- https://mvnrepository.com/artifact/com.aliyun.odps/odps-sdk-udf -->
+	<dependency>
+	    <groupId>com.aliyun.odps</groupId>
+	    <artifactId>odps-sdk-udf</artifactId>
+	    <version>0.28.4-public</version>
+	</dependency>
+		
+	</dependencies>
+</project>
