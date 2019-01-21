@@ -9,11 +9,13 @@ import com.csii.loan.backfile.LoanPmtFutureAmortItem;
 import com.csii.loan.backfile.UnilInfo;
 import java.math.BigDecimal;
 import java.math.RoundingMode;
+import java.sql.DatabaseMetaData;
 import java.util.ArrayList;
 import java.util.Calendar;
 import java.util.Collections;
 import java.util.Comparator;
 import java.util.Date;
+import java.util.HashMap;
 import java.util.Iterator;
 import java.util.List;
 import java.util.Map;
@@ -369,7 +371,7 @@ public class AmortizationScheduleGenerator {
 	public static void getFutureAmortItem(List<AmortizationScheduleItem> amortSched, List<Acctgrp> acctGrpList,
 			Date nextDueDate, Map<String, List<LoanPmtFutureAmortItem>> loanPmtFutureAmortItemMap, String unilyn,
 			String accttypcd, long gracedays, String acctNbr, Date firstduedate, BigDecimal disbAmt,
-			BigDecimal currBalance, BigDecimal outstandingPrin) {
+			BigDecimal currBalance, BigDecimal outstandingPrin, Date datemat, HashMap<String, BigDecimal> relAcctAccrBalanceMap) {
 		ArrayList loanPmtFutureAmortItem = new ArrayList();
 		BigDecimal duedateEndAmt = BigDecimal.ZERO;
 		if ("1".equals(unilyn) && "V".equals(accttypcd) || "0".equals(unilyn) && "R".equals(accttypcd)) {
@@ -428,6 +430,10 @@ public class AmortizationScheduleGenerator {
 									outstandingPrincipal = (UnilInfo) arg24.next();
 									if (acctNbr.equals(outstandingPrincipal.getAcctNbr())) {
 										principalAmt = outstandingPrincipal.getOccurrenceAmt();
+										
+										if(datemat.equals(arg28.dueDate)) {
+											principalAmt = relAcctAccrBalanceMap.get(outstandingPrincipal.getAcctNbr());
+										}
 										break;
 									}
 								}

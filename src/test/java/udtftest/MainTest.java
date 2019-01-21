@@ -233,4 +233,58 @@ public class MainTest {
 		}
 
 	}
+	
+	@Test
+	public void test6() throws ParseException {
+		PmtPlanUDTF udtf = new PmtPlanUDTF();
+		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
+		String acctnbr = "3046";
+		BigDecimal currentBalance = new BigDecimal("5800");
+		BigDecimal outstandingPrincipal = new BigDecimal("3854.86");
+		BigDecimal currentCharge = new BigDecimal("0");
+		BigDecimal outstandingCharge = new BigDecimal("0");
+		String nextDueDate = "2018-05-02";
+		Long acctrcvbsOnMaturityDate = Long.valueOf(0L);
+		String datemat = "2018-05-02";
+		String disbursmentDate = "2018-05-02";
+		Long pmtduedaynbr = Long.valueOf(2L);
+		String pmtcalperiodcd = "1M";
+		String intEffDate = "2018-04-01";
+		String lastBilledDueDate = "2018-04-02";
+		BigDecimal intEffAmt = new BigDecimal("66.72");
+		BigDecimal outstandingInterest = new BigDecimal("66.72");
+		BigDecimal effIntRate = new BigDecimal("0.085");
+		Integer gracedays = Integer.valueOf(3);
+		BigDecimal newintrate = new BigDecimal("0.085");
+		String daysmethcd = "ACT";
+		BigDecimal interestMargin = BigDecimal.ZERO;
+		Long effIntBase = Long.valueOf(360L);
+		String noteBalPmtTypCd = "FBI";
+		BigDecimal termPmtAmt = new BigDecimal("1960.79");
+		Object oddfreqnextduedate = null;
+		String noteIntPmtTypCd = "FBI";
+		Date contractdate = sdf.parse("2018-02-02");
+		String accrstartdate = "2018-02-02";
+		Long currTerm = Long.valueOf(3L);
+		Date interestFreeDate = gracedays == null ? contractdate
+				: DateWidget.addDays(contractdate, (long) gracedays.intValue());
+		String firstDueDate = "2018-03-02";
+		BigDecimal disbamt = new BigDecimal("5800");
+		String allRelAcctInfo = "4049-0.1-580-385.48-580-99990106-9999-1000010101207007000-3000492664-大头-1131009-1|5049-0.9-5220-3469.38-5220-00010001-0001-1000010101207007000-3000492664-大头-1131009-0";
+
+		try {
+			udtf.process(new Object[] { acctnbr, currentBalance, outstandingPrincipal, currentCharge, outstandingCharge,
+					nextDueDate, acctrcvbsOnMaturityDate, datemat, disbursmentDate, pmtduedaynbr, pmtcalperiodcd,
+					intEffDate, lastBilledDueDate, intEffAmt, outstandingInterest, effIntRate,
+					sdf.format(interestFreeDate), newintrate, daysmethcd, effIntBase, interestMargin, noteBalPmtTypCd,
+					termPmtAmt, oddfreqnextduedate, noteIntPmtTypCd, sdf.format(contractdate), accrstartdate, currTerm,
+					"NDUE", "1", "V", Long.valueOf(gracedays.longValue()), firstDueDate, disbamt, allRelAcctInfo,
+					"99990106", "9999", "1000010101207007000", "3000492664", "大头", "1131009","1" });
+		} catch (UDFException arg35) {
+			arg35.printStackTrace();
+		} catch (IOException arg36) {
+			arg36.printStackTrace();
+		}
+
+	}
 }

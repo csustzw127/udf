@@ -145,7 +145,7 @@ public class PmtPlanUDTF extends UDTF {
 			}
 
 			Iterator arg88 = allRealAcctInfoMap.entrySet().iterator();
-
+			HashMap<String,BigDecimal> relAcctAccrBalanceMap = new HashMap<String,BigDecimal>();
 			while (arg88.hasNext()) {
 				arg86 = (Entry) arg88.next();
 				arg90 = new Acctgrp();
@@ -155,10 +155,16 @@ public class PmtPlanUDTF extends UDTF {
 				arg90.setBalpct((BigDecimal) ((HashMap) arg86.getValue()).get("balpct"));
 				arg90.setOwnyn((String) ((HashMap) arg86.getValue()).get("ownyn"));
 				acctGrpList.add(arg90);
+				
+				BigDecimal relPrin = (BigDecimal) ((HashMap) arg86.getValue()).get("relPrin");
+				BigDecimal relOutstandingPrin = (BigDecimal) ((HashMap) arg86.getValue()).get("relOutstandingPrin");
+				relAcctAccrBalanceMap.put((String) arg86.getKey(), relPrin.subtract(relOutstandingPrin) );
+				
 			}
 
+			
 			AmortizationScheduleGenerator.getFutureAmortItem(amors, acctGrpList, nextDueDate, loanPmtFutureAmortItemMap,
-					unilyn, accttypcd, gracedays, acctnbr, firstDueDate, disbAmt, currentBalance, outstandingPrincipal);
+					unilyn, accttypcd, gracedays, acctnbr, firstDueDate, disbAmt, currentBalance, outstandingPrincipal,null,null);
 			if (!acctGrpList.isEmpty()) {
 				arg88 = acctGrpList.iterator();
 
@@ -169,12 +175,12 @@ public class PmtPlanUDTF extends UDTF {
 					AmortizationScheduleGenerator.getFutureAmortItem(amors, acctGrpList, nextDueDate,
 							loanPmtFutureAmortItemMap, unilyn, arg87.getAcctgrptypcd(), gracedays, loanTermHist,
 							firstDueDate, (BigDecimal) arg91.get("relDisbAmt"), (BigDecimal) arg91.get("relPrin"),
-							(BigDecimal) arg91.get("relOutstandingPrin"));
+							(BigDecimal) arg91.get("relOutstandingPrin"),datemat,relAcctAccrBalanceMap);
 				}
 			}
 		} else if ("0".equals(unilyn) && "R".equals(accttypcd)) {
 			AmortizationScheduleGenerator.getFutureAmortItem(amors, (List) null, nextDueDate, loanPmtFutureAmortItemMap,
-					unilyn, accttypcd, gracedays, acctnbr, firstDueDate, disbAmt, currentBalance, outstandingPrincipal);
+					unilyn, accttypcd, gracedays, acctnbr, firstDueDate, disbAmt, currentBalance, outstandingPrincipal,null,null);
 		}
 
 		if (!loanPmtFutureAmortItemMap.isEmpty()) {
