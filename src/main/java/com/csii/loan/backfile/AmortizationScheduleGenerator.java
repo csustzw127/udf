@@ -51,6 +51,7 @@ public class AmortizationScheduleGenerator {
 	private String calcbaltypcd;
 	private int existingReceivables;
 	private BigDecimal lastestBalance;
+	private String leap;
 
 	public AmortizationScheduleGenerator(String acctnbr, BigDecimal currentBalance, BigDecimal outstandingPrincipal,
 			BigDecimal currentCharge, BigDecimal outstandingCharge, Date nextDueDate, int acctrcvbsOnMaturityDate,
@@ -58,7 +59,7 @@ public class AmortizationScheduleGenerator {
 			Date lastBilledDueDate, BigDecimal intEffAmt, BigDecimal outstandingInterest, BigDecimal effIntRate,
 			Date interestFreeDate, BigDecimal newintrate, String daysmethcd, int effIntBase, BigDecimal interestMargin,
 			String noteBalPmtTypCd, BigDecimal termPmtAmt, Date oddfreqnextduedate, String noteIntPmtTypCd,
-			Date contractdate, Date accrstartdate, Long currTerm, String calcbaltypcd) {
+			Date contractdate, Date accrstartdate, Long currTerm, String calcbaltypcd,String leap) {
 		this.acctnbr = acctnbr;
 		this.currentBalance = currentBalance;
 		this.outstandingPrincipal = outstandingPrincipal;
@@ -88,6 +89,7 @@ public class AmortizationScheduleGenerator {
 		this.accrstartdate = accrstartdate;
 		this.currTerm = currTerm;
 		this.calcbaltypcd = calcbaltypcd;
+		this.leap = leap;
 	}
 
 	public List<AmortizationScheduleItem> generate() {
@@ -97,9 +99,14 @@ public class AmortizationScheduleGenerator {
 			this.fillStartingAndEndingBalance(amortSched);
 			return amortSched;
 		} else {
-			this.calcFutureReceivables(amortSched);
-			this.fillStartingAndEndingBalance(amortSched);
-			return amortSched;
+			// TODO 
+			if(this.noteBalPmtTypCd.equals("OTH")) {
+				return null;
+			} else {
+			  this.calcFutureReceivables(amortSched);
+			  this.fillStartingAndEndingBalance(amortSched);
+			  return amortSched;
+			}
 		}
 	}
 
@@ -144,7 +151,7 @@ public class AmortizationScheduleGenerator {
 		if (accruingBalance.compareTo(BigDecimal.ZERO) > 0) {
 			Long currTerm = this.currTerm;
 			Date dueDate = this.calcInitialDueDate();
-
+			
 			for (Date fromDate = this.calcInitialFromDate(); (dueDate.before(this.datemat)
 					|| dueDate.equals(this.datemat))
 					&& accruingBalance.compareTo(BigDecimal.ZERO) > 0; currTerm = Long
@@ -233,7 +240,7 @@ public class AmortizationScheduleGenerator {
 
 	private BigDecimal calcPeriodInterest(BigDecimal accruingBalance, Date fromDate, Date dueDate) {
 		BigDecimal periodInterest = BigDecimal.ZERO;
-		Date intStartDate = this.intEffDate;
+		Date intStartDate = this.intEffDate;  
 		intStartDate = DateWidget.addDays(intStartDate, 1L);
 		if (!fromDate.after(intStartDate) && !intStartDate.after(dueDate)) {
 			BigDecimal latestIntBalAmt = this.intEffAmt;
@@ -265,6 +272,12 @@ public class AmortizationScheduleGenerator {
 			periodDays = DateWidget.calcTermDays(fromDate, dueDate);
 		}
 
+		if(Const.YN_Y.equals(leap) && effIntBase == 365 && DateWidget.isLeapYear(dueDate)) {
+			effIntBase = 366;
+		} else if(Const.YN_Y.equals(leap) && effIntBase == 366 && !DateWidget.isLeapYear(dueDate)) {
+			effIntBase = 365;
+		}
+		
 		periodInterest = accruingBalance.multiply(intRate).multiply(new BigDecimal(periodDays))
 				.divide(new BigDecimal(this.effIntBase), 5, RoundingMode.HALF_UP);
 		periodInterest = periodInterest.add(this.interestMargin);
@@ -285,6 +298,10 @@ public class AmortizationScheduleGenerator {
 
 	private BigDecimal calcPeriodPrincipal(BigDecimal accruingBalance, Date fromDate, Date dueDate,
 			BigDecimal periodInterest) {
+		/*
+		 * FBI 等額本息
+		 * FB  等額本金
+		 */
 		BigDecimal periodPrincipal = BigDecimal.ZERO;
 		if ("FBI".equals(this.noteBalPmtTypCd)) {
 			periodPrincipal = this.termPmtAmt.subtract(periodInterest);

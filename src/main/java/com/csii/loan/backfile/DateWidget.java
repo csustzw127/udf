@@ -1,7 +1,6 @@
 /*** Eclipse Class Decompiler plugin, copyright (c) 2016 Chen Chao (cnfree2000@hotmail.com) ***/
 package com.csii.loan.backfile;
 
-import com.csii.loan.backfile.CalPeriodEnum;
 import java.util.Calendar;
 import java.util.Date;
 
@@ -103,5 +102,12 @@ public class DateWidget {
 
 	public static boolean areInSameNatrualMonth(Date d1, Date d2) {
 		return d1.getYear() == d2.getYear() && d1.getMonth() == d2.getMonth();
+	}
+
+	public static boolean isLeapYear(Date dueDate) {
+		Calendar c =  Calendar.getInstance();
+		c.setTime(dueDate);
+		int  year = c.get(Calendar.YEAR);
+		return year % 4 == 0 && (year % 100 != 0 || year % 400 == 0);
 	}
 }

@@ -14,6 +14,7 @@ import java.math.RoundingMode;
 import java.text.ParseException;
 import java.text.SimpleDateFormat;
 import java.util.ArrayList;
+import java.util.Collections;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.Iterator;
@@ -21,7 +22,7 @@ import java.util.List;
 import java.util.Map.Entry;
 
 @Resolve({
-		"string,decimal,decimal,decimal,decimal,string,bigint,string,string,bigint,string,string,string,decimal,decimal,decimal,string,decimal,string,bigint,decimal,string,decimal,string,string,string,string,bigint,string,string,string,bigint,string,decimal,string,string,string,string,string,string,string->string,string,string,string,string,string,string,decimal,string,string,string,decimal,decimal,decimal,decimal,decimal,bigint,string" })
+		"string,decimal,decimal,decimal,decimal,string,bigint,string,string,bigint,string,string,string,decimal,decimal,decimal,string,decimal,string,bigint,decimal,string,decimal,string,string,string,string,bigint,string,string,string,bigint,string,decimal,string,string,string,string,string,string,string,string->string,string,string,string,string,string,string,decimal,string,string,string,decimal,decimal,decimal,decimal,decimal,bigint,string" })
 public class PmtPlanUDTF extends UDTF {
 	public void process(Object[] args) throws UDFException, IOException {
 		SimpleDateFormat sdf = new SimpleDateFormat("yyyy-MM-dd");
@@ -80,13 +81,13 @@ public class PmtPlanUDTF extends UDTF {
 		} catch (ParseException arg84) {
 			throw new RuntimeException(arg84);
 		}
-
+		String leap = (String) args[41];
 		AmortizationScheduleGenerator generator = new AmortizationScheduleGenerator(acctnbr, currentBalance,
 				outstandingPrincipal, currentCharge, outstandingCharge, nextDueDate, acctrcvbsOnMaturityDate, datemat,
 				disbursmentDate, pmtduedaynbr, pmtcalperiodcd, intEffDate, lastBilledDueDate, intEffAmt,
 				outstandingInterest, effIntRate, interestFreeDate, newintrate, daysmethcd, effIntBase, interestMargin,
 				noteBalPmtTypCd, termPmtAmt, oddfreqnextduedate, noteIntPmtTypCd, contractdate, accrstartdate, currTerm,
-				calcbaltypcd);
+				calcbaltypcd,leap);
 		List amors = generator.generate();
 		String unilyn = (String) args[29];
 		String accttypcd = (String) args[30];
@@ -235,6 +236,10 @@ public class PmtPlanUDTF extends UDTF {
 							arg89, arg89, arg97, sdf.format(startDate), sdf.format(dueDate), sdf.format(arg98),
 							principalAmt, intRestAmt, chargeAmt, startBalAmt, endBalAmt, Long.valueOf(cterm),
 							rtnchannalID });
+//					System.out.println(rtnbranchNbr+","+ rtnbankOrgNbr+","+ rtnsoldProdID+","+ rtncustID+","+ rtncustName+","+
+//							arg89+","+ arg89+","+ arg97+","+ sdf.format(startDate)+","+ sdf.format(dueDate)+","+ sdf.format(arg98)+","+
+//							principalAmt+","+ intRestAmt+","+ chargeAmt+","+ startBalAmt+","+ endBalAmt+","+ Long.valueOf(cterm)+","+
+//							rtnchannalID );
 				}
 			}
 		}
